@@ -1,8 +1,20 @@
-#include <gtest/gtest.h>
+#include <iostream>
 
-#include <algos/lib.hpp>
+bool BinarySearch(const int* begin, const int* end, int target) {
+  if (begin == end) {
+    return false;
+  }
+  size_t middle_index = (end - begin) / 2;
+  if (begin[middle_index] == target) {
+    return true;
+  }
+  if (begin[middle_index] > target) {
+    return BinarySearch(begin, begin + middle_index, target);
+  }
+  return BinarySearch(begin + middle_index + 1, end, target);
+}
 
-TEST(BinSearch, JustWorks) {
+int main() {
   size_t size_of_array = 0;
   std::cin >> size_of_array;
   int* array = new int[size_of_array];
@@ -23,5 +35,5 @@ TEST(BinSearch, JustWorks) {
     }
   }
   delete[] array;
-  EXPECT_EQ(1, 1);
+  return 0;
 }

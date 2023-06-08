@@ -40,6 +40,8 @@ set_target_properties(
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED ON)
 
+add_subdirectory(algos)
+
 if(TESTS)
     message("TESTS ENABLED")
     add_subdirectory(tests)
