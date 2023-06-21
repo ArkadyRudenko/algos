@@ -5,7 +5,11 @@ I want to implement common algos and structs here
 Excellent course of mipt:
 
 - [1st semester](https://www.youtube.com/playlist?list=PL4_hYwCyhAvZtI5h-e2FBGLiygrGDWji0) (lectures)
-  - [1st context](https://contest.yandex.ru/contest/39267/problems/) (tasks)
+  - [1st context](https://contest.yandex.ru/contest/39267/problems/) (intro)
+  - [2nd context](https://contest.yandex.ru/contest/39322/problems/) (sort/heap)
+  - [3rd context](https://contest.yandex.ru/contest/41252/problems/) (search-trees)
+  - [4th context](https://contest.yandex.ru/contest/42391/problems/) (implicit-key)
+  - [5th context](https://contest.yandex.ru/contest/43492/problems/) (hash+geometry)
 
 - [2nd semester](https://www.youtube.com/playlist?list=PL4_hYwCyhAvZZ_DqJ7mS_xyG_AsyerfdB) (lectures)
-  - [1st context](https://contest.yandex.ru/contest/45723/problems/) (tasks)
+  - [1st context](https://contest.yandex.ru/contest/45723/problems/) (DFS+BFS)
