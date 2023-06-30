@@ -1,7 +1,9 @@
+#include <cstdlib>
+#include <deque>
 #include <iostream>
 #include <vector>
 
-namespace graphs {
+namespace graph {
 
 template <typename It>
 class Range {
@@ -41,7 +43,7 @@ class DirectedWeightedGraph {
 
  public:
   explicit DirectedWeightedGraph(size_t vertex_count = 0)
-      : vertexes_(vertex_count + 1), vertexes_used_(vertex_count + 1) {}
+      : vertexes_(vertex_count) {}
 
   EdgeId AddEdge(const Edge<Weight>& edge) {
     edges_.push_back(edge);
@@ -94,28 +96,3 @@ class DirectedWeightedGraph {
 using UnitGraph = DirectedWeightedGraph<Unit>;
 
 }  // namespace graph
-int main() {
-  size_t vertexes = 0, edges = 0;
-  std::cin >> vertexes >> edges;
-  graphs::UnitGraph graph(vertexes);
-  size_t s = 0, t = 0;
-  std::cin >> s >> t;
-  for (size_t i = 0; i < edges; ++i) {
-    size_t begin = 0, end = 0;
-    std::cin >> begin >> end;
-    graph.AddEdge({begin, end});
-  }
-  graph.Dfs();
-  std::cout << "Ok\n";
-}
-
-/*
-8 6
-1 2
-1 2
-2 3
-3 4
-4 5
-5 6
-7 8
- */
