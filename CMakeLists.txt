@@ -30,7 +30,7 @@ add_compile_options(-fsanitize=address)
 add_link_options(-fsanitize=address)
 
 # ADD algos Lib
-add_library(${LIB_TARGET} STATIC ${LIB_HEADERS} ${LIB_CXX_SOURCES})
+add_library(${LIB_TARGET} STATIC ${LIB_HEADERS})
 target_include_directories(${LIB_TARGET} PUBLIC ${LIB_INCLUDE_PATH})
 
 set_target_properties(

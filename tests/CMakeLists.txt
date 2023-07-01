@@ -1,12 +1,12 @@
-add_executable(algos_tests algos_tests.cpp)
+add_executable(tests tests.cpp)
 
-target_link_libraries(algos_tests ${LIB_TARGET} GTest::gtest_main)
+target_link_libraries(tests ${LIB_TARGET} GTest::gtest_main)
 
 include(GoogleTest)
-gtest_discover_tests(algos_tests)
+gtest_discover_tests(tests)
 
 set_target_properties(
-        algos_tests
+        tests
         PROPERTIES
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED ON)

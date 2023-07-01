@@ -38,7 +38,7 @@ class DirectedWeightedGraph {
   using IncidentEdgesRange = Range<typename IncidenceList::const_iterator>;
 
   struct Used {
-    bool is_used_ = false;
+    bool is_used_{false};
   };
 
  public:
