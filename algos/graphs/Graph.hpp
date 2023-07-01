@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-namespace graph {
+namespace algos::graph {
 
 template <typename It>
 class Range {
@@ -29,21 +29,15 @@ struct Edge {
   Weight weight;
 };
 
-struct Unit {};
-
 template <typename Weight>
 class DirectedWeightedGraph {
  private:
   using IncidenceList = std::vector<EdgeId>;
   using IncidentEdgesRange = Range<typename IncidenceList::const_iterator>;
 
-  struct Used {
-    bool is_used_{false};
-  };
-
  public:
   explicit DirectedWeightedGraph(size_t vertex_count = 0)
-      : vertexes_(vertex_count) {}
+      : vertexes_(vertex_count + 1) {}
 
   EdgeId AddEdge(const Edge<Weight>& edge) {
     edges_.push_back(edge);
@@ -52,7 +46,7 @@ class DirectedWeightedGraph {
     return id;
   }
 
-  size_t GetVertexCount() const { return vertexes_.size(); }
+  size_t GetVertexCount() const { return vertexes_.size() - 1; }
 
   size_t GetEdgeCount() const { return edges_.size(); }
 
@@ -63,36 +57,13 @@ class DirectedWeightedGraph {
     return {std::begin(edges), std::end(edges)};
   }
 
-  size_t GetMinRoute(size_t begin_id, size_t end_id) const { return 0; }
-
-  // This Dfs only for not directed not weight
-  size_t Dfs() const {
-    for (auto n{0}; auto& is_used : vertexes_used_) {
-      if (n != 0 && !is_used.is_used_) {
-        DfsImpl(n);
-      }
-      n++;
-    }
-    return 0;
-  }
-
-  size_t DfsImpl(size_t vertex_id) const {
-    vertexes_used_[vertex_id].is_used_ = true;
-    std::cout << "VertexId = " << vertex_id << std::endl;
-    for (auto ver_id : vertexes_[vertex_id]) {
-      if (!vertexes_used_[ver_id].is_used_) {
-        DfsImpl(ver_id);
-      }
-    }
-    return 0;
-  }
-
  private:
   std::vector<Edge<Weight>> edges_;
   std::vector<IncidenceList> vertexes_;
-  mutable std::vector<Used> vertexes_used_;
 };
+
+struct Unit {};
 
 using UnitGraph = DirectedWeightedGraph<Unit>;
 
-}  // namespace graph
+}  // namespace algos::graph

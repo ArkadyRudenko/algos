@@ -1,5 +1,7 @@
 #include <iostream>
 
+// Correct [{()}] order
+
 namespace hippogriff {
 
 class Stack {

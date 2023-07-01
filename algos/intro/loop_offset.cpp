@@ -1,5 +1,9 @@
 #include <iostream>
 
+// find offset if sorted array
+// [1, 2, 3, 4, 5, 6] -> [5, 6, 1, 2, 3, 4]
+// offset = 2
+
 size_t CalculateLoopOffset(const int* begin, size_t size, size_t offset) {
   if (begin[0] < begin[size - 1] || size == 1) {
     return offset;
