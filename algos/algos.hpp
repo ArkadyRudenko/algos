@@ -6,51 +6,6 @@
 #include <algos/graphs/Router.hpp>
 
 namespace algos {
-
-bool CoverageCheck(const int64_t* arr, size_t size, int64_t piece,
-                   int64_t len) {
-  if (len == 0) {
-    return false;
-  }
-  int64_t cur_pos = arr[0];
-  for (size_t i = 0; i < size; ++i) {
-    if (arr[i] > cur_pos || i == 0) {
-      if (piece == 0) {
-        return false;
-      }
-      cur_pos = arr[i] + len;
-      piece--;
-    }
-  }
-  return true;
-}
-
-size_t MinLimos(int64_t* arr, size_t size, int64_t piece) {
-  std::sort(arr, arr + size);
-  int64_t len = std::abs(arr[size - 1] - arr[0]);
-  int64_t min_len = len / (int64_t)piece;
-  if (min_len == 0) {
-    min_len = 1;
-  }
-  int64_t next_plus = min_len / 2;
-  while (true) {
-    bool too_short = CoverageCheck(arr, size, piece, min_len - 1);
-    bool too_enough = CoverageCheck(arr, size, piece, min_len);
-    if (!too_short && too_enough) {
-      return min_len;
-    }
-    if (too_short) {
-      min_len -= next_plus;
-    } else {
-      min_len += next_plus;
-    }
-    next_plus /= 2;
-    if (next_plus == 0) {
-      next_plus = 1;
-    }
-  }
-}
-
 }
 /*
 #include <iostream>
@@ -123,7 +78,6 @@ void DfsNotRecursion() const {
       while (!vertexes.empty()) {
         auto ver_id = vertexes.top();
         vertexes_used_[ver_id].is_used_ = true;
-        std::cout << "VertexId = " << ver_id << std::endl;
         vertexes.pop();
         for (auto edg_id : vertexes_[ver_id]) {
           vertexes.push(edges_[edg_id].to);
@@ -132,8 +86,46 @@ void DfsNotRecursion() const {
     }
     n++;
   }
-  vertexes_used_ = std::vector<Used>(vertexes_.size());
 }
 
+ ///////////////////////// LOOP
+ std::vector<VertexId> FindLoop() {
+ for (auto n{0}; auto& is_used : vertexes_used_) {
+   if (n != 0 && !is_used.is_used_) {
+     DfsImpl(n);
+   }
+   n++;
+ }
+ return real_path_;
+}
 
+void DfsImpl(const VertexId vertex_id) {
+vertexes_used_[vertex_id].is_used_ = true;
+colors_[vertex_id] = Color::Grow;
+path_.push_back(vertex_id);
+std::vector<Used> to_vertexes;
+to_vertexes.reserve(graph_.GetVertexCount() + 1);
+for (auto edg_id : graph_.GetIncidentEdges(vertex_id)) {
+ const auto& edge = graph_.GetEdge(edg_id);
+ if (to_vertexes[edge.to].is_used_) {
+   continue;
+ }
+ if (edge.to == vertex_id) {
+   is_done_ = true;
+   real_path_.clear();
+   real_path_.push_back(vertex_id);
+ }
+ to_vertexes[edge.to].is_used_ = true;
+ if (colors_[edge.to] == Color::White) {
+   DfsImpl(edge.to);
+ } else if (colors_[edge.to] == Color::Grow) {
+   if (!is_done_) {
+     is_done_ = true;
+     real_path_ = path_;
+   }
+ }
+}
+colors_[vertex_id] = Color::Black;
+path_.pop_back();
+}
  */

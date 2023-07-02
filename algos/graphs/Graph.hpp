@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdlib>
 #include <deque>
 #include <iostream>
@@ -64,6 +66,7 @@ class DirectedWeightedGraph {
 
 struct Unit {};
 
+using UnitEdge = Edge<Unit>;
 using UnitGraph = DirectedWeightedGraph<Unit>;
 
 }  // namespace algos::graph
