@@ -4,9 +4,7 @@
 #include <stack>
 #include <vector>
 
-#include <gtest/gtest.h>
-
-// Bridges
+// cut vertexes
 
 namespace graphs {
 
@@ -92,24 +90,16 @@ class Router {
         ret_(graph.GetVertexCount() + 1),
         times_(graph.GetVertexCount() + 1) {}
 
-  size_t GetBridges() {
+  std::vector<EdgeId> GetCutVertices() {
     for (auto n{0}; auto& is_used : vertexes_used_) {
       if (n != 0 && !is_used.is_used_) {
+        cur_root_ = n;
+        cur_root_child_count_ = 0;
         DfsImpl(n);
       }
       n++;
     }
-    size_t res = bridges_.size();
-    size_t prev_from{0};
-    bool is_expired{false};
-    for (size_t i = 0; i < bridges_.size() - 1; ++i) {
-      const auto cur_edge = graph_.GetEdge(bridges_[i]);
-      const auto next_edge = graph_.GetEdge(bridges_[i + 1]);
-      if (cur_edge.from == next_edge.from) {
-        res--;
-      }
-    }
-    return res;
+    return points_;
   }
 
   void DfsImpl(VertexId vertex_id,
@@ -127,30 +117,17 @@ class Router {
       } else {
         DfsImpl(to, vertex_id);
         ret_[vertex_id] = std::min(ret_[vertex_id], ret_[to]);
-        if (ret_[to] > times_[vertex_id]) {
-          PushBridge(edg_id);
+        if (ret_[to] >= times_[vertex_id] && vertex_id != cur_root_) {
+          points_.push_back(vertex_id);
+        }
+        if (cur_root_ == vertex_id) {
+          cur_root_child_count_++;
         }
       }
     }
-    // (v, t) <=> t_in(t) == ret(t)
-  }
-
-  void PushBridge(const EdgeId edg_id) {
-    const auto& edge = graph_.GetEdge(edg_id);
-    if (IsNotMulti(edge.from, edge.to) && IsNotMulti(edge.to, edge.from)) {
-      bridges_.push_back(edg_id);
+    if (vertex_id == cur_root_ && cur_root_child_count_ > 1) {
+      points_.push_back(vertex_id);
     }
-  }
-
-  bool IsNotMulti(VertexId from, VertexId to) {
-    size_t multi_count{0};
-    for (auto cur_edg_id : graph_.GetIncidentEdges(from)) {
-      const auto& cur_edge = graph_.GetEdge(cur_edg_id);
-      if (cur_edge.to == to) {
-        ++multi_count;
-      }
-    }
-    return multi_count == 1;
   }
 
   bool IsSelfEdge(const Edge<Weight>& edge) { return edge.to == edge.from; }
@@ -164,96 +141,39 @@ class Router {
     return false;
   }
 
-  size_t GetCountOfLoners(VertexId ver_id = 0) {
-    if (ver_id == 0) {
-      ver_id = 1;
-    }
-    vertexes_used_[ver_id].is_used_ = true;
-    size_t children{0};
-    for (auto edg_id : graph_.GetIncidentEdges(ver_id)) {
-      const auto& edge = graph_.GetEdge(edg_id);
-      children++;
-      if (!vertexes_used_[edge.to].is_used_) {
-        GetCountOfLoners(edge.to);
-      }
-    }
-    if (children == 1) {
-      count_++;
-    }
-    return count_;
-  }
-
  private:
   const Graph& graph_;
   std::vector<Used> vertexes_used_;
-  size_t count_{0};
   std::vector<size_t> ret_;
   std::vector<size_t> times_;
   size_t time_{0};
-  std::vector<EdgeId> bridges_;
+  size_t cur_root_{0};
+  size_t cur_root_child_count_{0};
+  std::vector<EdgeId> points_;
 };
-
-using UnitEdge = Edge<Unit>;
 
 }  // namespace graphs
 
-TEST(Graphs, BridgesAdd1) {
-  /*
-   *       |
-   *    -- * --
-   *       |
-   */
-  std::vector<graphs::UnitEdge> edges = {
-      {1, 2},
-      {1, 3},
-      {1, 4},
-      {1, 5},
-  };
-  graphs::UnitGraph graph(5);
-  for (const auto& e : edges) {
-    graph.AddEdge(e);
-    graph.AddEdge({e.to, e.from});
+int main() {
+  size_t vertexes = 0, edges = 0;
+  std::cin >> vertexes >> edges;
+  graphs::UnitGraph graph(vertexes);
+  for (size_t i = 0; i < edges; ++i) {
+    size_t begin = 0, end = 0;
+    std::cin >> begin >> end;
+    if (begin != end) {
+      graph.AddEdge({begin, end});
+      graph.AddEdge({end, begin});
+    } else {
+      graph.AddEdge({begin, end});
+    }
   }
   graphs::Router router(graph);
-  ASSERT_EQ(2, router.GetBridges());
-}
-
-TEST(Graphs, BridgesAdd2) {
-  /*
-   *    *             *
-   *     \           /
-   *      * -- * -- *
-   *     /           \
-   *    *             *
-  */
-  std::vector<graphs::UnitEdge> edges = {
-      {1, 2}, {1, 3}, {1, 4}, {4, 5}, {5, 6}, {5, 7},
-  };
-  graphs::UnitGraph graph(7);
-  for (const auto& e : edges) {
-    graph.AddEdge(e);
-    graph.AddEdge({e.to, e.from});
+  auto points = router.GetCutVertices();
+  std::sort(points.begin(), points.end());
+  points.erase(std::unique(points.begin(), points.end()), points.end());
+  std::cout << points.size() << '\n';
+  for (const auto point : points) {
+    std::cout << point << '\n';
   }
-  graphs::Router router(graph);
-  ASSERT_EQ(2, router.GetBridges());
-}
-
-TEST(Graphs, BridgesAdd3) {
-  /*
-   *    *             *
-   *    |\           /|
-   *    | * -- * -- * |
-   *    |/           \|
-   *    *             *
-  */
-  std::vector<graphs::UnitEdge> edges = {
-      {1, 2}, {1, 3}, {2, 3}, {1, 4}, {4, 5}, {5, 6}, {5, 7}, {6, 7},
-  };
-  graphs::UnitGraph graph(7);
-  for (const auto& e : edges) {
-    graph.AddEdge(e);
-    graph.AddEdge({e.to, e.from});
-  }
-  graphs::Router router(graph);
-  ASSERT_EQ(1, router.GetBridges());
 }

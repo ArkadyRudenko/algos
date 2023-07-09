@@ -4,9 +4,7 @@
 #include <stack>
 #include <vector>
 
-#include <gtest/gtest.h>
-
-// Bridges
+// -
 
 namespace graphs {
 
@@ -100,12 +98,24 @@ class Router {
       n++;
     }
     size_t res = bridges_.size();
+    if (res % 2 == 0) {
+      res /= 2;
+    } else {
+      res = res / 2 + 1;
+    }
+    if (res == 0) {
+      return 0;
+    }
     size_t prev_from{0};
-    bool is_expired{false};
     for (size_t i = 0; i < bridges_.size() - 1; ++i) {
       const auto cur_edge = graph_.GetEdge(bridges_[i]);
       const auto next_edge = graph_.GetEdge(bridges_[i + 1]);
-      if (cur_edge.from == next_edge.from) {
+      if (prev_from == cur_edge.from) {
+        continue ;
+      } else {
+        prev_from = cur_edge.from;
+      }
+      if (cur_edge.from == next_edge.to) {
         res--;
       }
     }
@@ -193,67 +203,19 @@ class Router {
   std::vector<EdgeId> bridges_;
 };
 
-using UnitEdge = Edge<Unit>;
-
 }  // namespace graphs
 
-TEST(Graphs, BridgesAdd1) {
-  /*
-   *       |
-   *    -- * --
-   *       |
-   */
-  std::vector<graphs::UnitEdge> edges = {
-      {1, 2},
-      {1, 3},
-      {1, 4},
-      {1, 5},
-  };
-  graphs::UnitGraph graph(5);
-  for (const auto& e : edges) {
-    graph.AddEdge(e);
-    graph.AddEdge({e.to, e.from});
+int main() {
+  size_t vertexes = 0, edges = 0;
+  std::cin >> vertexes >> edges;
+  graphs::UnitGraph graph(vertexes);
+  for (size_t i = 0; i < edges; ++i) {
+    size_t begin = 0, end = 0;
+    std::cin >> begin >> end;
+    graph.AddEdge({begin, end});
+    graph.AddEdge({end, begin});
   }
   graphs::Router router(graph);
-  ASSERT_EQ(2, router.GetBridges());
-}
-
-TEST(Graphs, BridgesAdd2) {
-  /*
-   *    *             *
-   *     \           /
-   *      * -- * -- *
-   *     /           \
-   *    *             *
-  */
-  std::vector<graphs::UnitEdge> edges = {
-      {1, 2}, {1, 3}, {1, 4}, {4, 5}, {5, 6}, {5, 7},
-  };
-  graphs::UnitGraph graph(7);
-  for (const auto& e : edges) {
-    graph.AddEdge(e);
-    graph.AddEdge({e.to, e.from});
-  }
-  graphs::Router router(graph);
-  ASSERT_EQ(2, router.GetBridges());
-}
-
-TEST(Graphs, BridgesAdd3) {
-  /*
-   *    *             *
-   *    |\           /|
-   *    | * -- * -- * |
-   *    |/           \|
-   *    *             *
-  */
-  std::vector<graphs::UnitEdge> edges = {
-      {1, 2}, {1, 3}, {2, 3}, {1, 4}, {4, 5}, {5, 6}, {5, 7}, {6, 7},
-  };
-  graphs::UnitGraph graph(7);
-  for (const auto& e : edges) {
-    graph.AddEdge(e);
-    graph.AddEdge({e.to, e.from});
-  }
-  graphs::Router router(graph);
-  ASSERT_EQ(1, router.GetBridges());
+  const auto res = router.GetBridges();
+  std::cout << res;
 }

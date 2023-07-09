@@ -1,3 +1,7 @@
+#include <iostream>
+
+#include <gtest/gtest.h>
+
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -106,6 +110,7 @@ void QuickSortImpl(it begin, it end, std::vector<int>& a) {
     return;
   }
   int pivot = MedianOfMedians(begin, end);
+//  int pivot = *(begin + (end - begin) / 2);
   int i = Partition(begin, end, pivot);
   QuickSortImpl(begin, begin + i, a);
   QuickSortImpl(begin + i + 1, end, a);
@@ -115,30 +120,17 @@ void QuickSort(std::vector<int>& arr) {
   QuickSortImpl(arr.begin(), arr.end(), arr);
 }
 
-int main() {
-  // , k = 0, a0 = 0, a1 = 0
+TEST(Sort, isSorted) {
   std::srand(std::time(nullptr));
-  int n = 0;
-  std::cin >> n;
-  std::vector<int> arr;
-  for (size_t i = 0; i < n; ++i) {
-    arr.push_back(std::rand() % 100);
-  }
-  //  GenerateArray(arr, k, a0, a1);
-  for (int i = 0; i < n; ++i) {
-    std::cout << arr[i] << ' ';
-  }
-  std::cout << std::endl;
-  //  QuickSort(arr);
-  int k = 0;
-  std::cin >> k;
-  k = QuickSelect(arr, k);
-  std::cout << "QuickSelect = " << k << std::endl;
-  for (int i = 0; i < n; ++i) {
-    std::cout << i << "th = " << arr[i] << '\n';
-    if (i > 15 && arr[i - 15] == k) {
-      break;
+  for (size_t n = 0; n < 100; ++n) {
+    std::vector<int> vec;
+    vec.reserve(10000);
+    for (size_t i = 0; i < 10000; ++i) {
+      vec.push_back(std::rand() % 2000);
     }
+//    std::sort(vec.begin(), vec.end());
+    QuickSort(vec);
+    ASSERT_EQ(true, std::is_sorted(vec.begin(), vec.end()));
   }
-  return 0;
 }
+
