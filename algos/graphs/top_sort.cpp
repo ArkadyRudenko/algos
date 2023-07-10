@@ -3,7 +3,7 @@
 #include <stack>
 #include <vector>
 
-// has loop
+// find topology sort
 
 namespace graphs {
 

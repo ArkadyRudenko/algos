@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+// BinaryHeap
+
 class BinaryHeap {
  public:
   void Add(int data) {

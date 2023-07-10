@@ -3,7 +3,7 @@
 #include <stack>
 #include <vector>
 
-// has loop
+// does it have a loop?
 
 namespace graphs {
 

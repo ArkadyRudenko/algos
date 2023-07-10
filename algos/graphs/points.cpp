@@ -4,7 +4,7 @@
 #include <stack>
 #include <vector>
 
-// cut vertexes
+// find all cut vertexes
 
 namespace graphs {
 

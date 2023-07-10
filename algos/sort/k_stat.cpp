@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+// QuickSort and k-th statistic
+
 using it = std::vector<int>::iterator;
 
 int QuickSelectImpl(it, it, int, bool);
@@ -37,7 +39,7 @@ std::vector<std::vector<int>> SplitByFive(const std::vector<int>& arr) {
 
 int MedianOfMedians(it begin, it end) {
   std::vector<int> spine(begin, end);
-  auto chunks = SplitByFive(spine);
+  auto chunks = SplitByFive(spine); // TODO: avoid allocations
   for (auto& chunk : chunks) {
     BubbleSort(chunk);
   }

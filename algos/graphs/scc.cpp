@@ -3,7 +3,7 @@
 #include <stack>
 #include <vector>
 
-// Strongly connected components
+// find strongly connected components
 
 namespace graphs {
 

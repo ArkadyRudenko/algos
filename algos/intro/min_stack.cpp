@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-// Mib-stack
+// Min-stack
 
 class MinStack {
  public:
