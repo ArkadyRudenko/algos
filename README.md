@@ -13,3 +13,7 @@ Excellent course of mipt:
 
 - [2nd semester](https://www.youtube.com/playlist?list=PL4_hYwCyhAvZZ_DqJ7mS_xyG_AsyerfdB) (lectures)
   - [1st contest](https://contest.yandex.ru/contest/45723/problems/) (DFS+BFS)
+
+
+### Other
+ - Yandex [contest](https://contest.yandex.ru/contest/28412/problems) solving [here](algos/yandex)
