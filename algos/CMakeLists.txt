@@ -1,5 +1,6 @@
 add_subdirectory(intro)
 add_subdirectory(graphs)
+add_subdirectory(graphs_paths)
 add_subdirectory(sort)
 add_subdirectory(trees)
 add_subdirectory(yandex)

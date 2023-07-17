@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <iostream>
-#include <queue>
+#include <optional>
+#include <set>
+#include <stack>
 #include <vector>
 
-// short path on not-weight graph
+// Dijkstra algorithm
 
 namespace graphs {
 
@@ -68,66 +70,82 @@ struct Unit {};
 
 using UnitGraph = DirectedWeightedGraph<Unit>;
 
-struct ShortestPathInfo {
-  int path;
-  std::vector<size_t> vertexes;
-};
-
 template <typename Weight>
 class Router {
  private:
   using Graph = DirectedWeightedGraph<Weight>;
+  using VertexList = std::vector<VertexId>;
 
   struct Used {
     bool is_used_{false};
   };
 
-  struct Dist {
-    int dist{-1};
+  enum class Color {
+    White = 0,
+    Grow = 1,
+    Black = 2,
   };
 
  public:
   explicit Router(const Graph& graph)
       : graph_(graph),
-        dists_(graph.GetVertexCount() + 1),
+        ready_dist_(graph.GetVertexCount() + 1, -1),
+        dist_(graph.GetVertexCount() + 1, -1),
         vertexes_used_(graph.GetVertexCount() + 1) {}
 
-  ShortestPathInfo MinNotWeightPathFromTo(size_t from, size_t to) {
-    const size_t vertexes_count = graph_.GetVertexCount();
-    if (from > vertexes_count or to > vertexes_count) {
-      return {-1, {}};
-    } else if (from == to) {
-      return {0, {from}};
+  size_t GetMinPathFromTo(VertexId from, VertexId to) {
+    ready_dist_[from] = dist_[from] = 0;
+    DfsImpl(from);
+    return ready_dist_[to];
+  }
+
+  void DfsImpl(VertexId vertex_id, VertexId parent = 0) {
+    vertexes_used_[vertex_id].is_used_ = true;
+    Relax(vertex_id);
+    UpdateCut(vertex_id, parent);
+    if (cut_.empty()) {
+      return;
     }
-    std::queue<size_t> bfs_q;
-    std::vector<size_t> path(vertexes_count + 1);
-    path[from] = 0;
-    dists_[from].dist = 0;
-    bfs_q.push(from);
-    while (!bfs_q.empty()) {
-      size_t cur = bfs_q.front();
-      bfs_q.pop();
-      for (auto edg_id : graph_.GetIncidentEdges(cur)) {
-        auto cur_to = graph_.GetEdge(edg_id).to;
-        if (dists_[cur_to].dist == -1) {
-          dists_[cur_to].dist = dists_[cur].dist + 1;
-          bfs_q.push(cur_to);
-          path[cur_to] = cur;
-        }
+    const auto& edge = GetMinEdgeFromCut();
+    ready_dist_[edge.to] = dist_[edge.to];
+    DfsImpl(edge.to, vertex_id);
+  }
+
+  void Relax(VertexId ver) {
+    for (auto edg_id : graph_.GetIncidentEdges(ver)) {
+      const auto& edge = graph_.GetEdge(edg_id);
+      if (dist_[edge.to] == -1) {
+        dist_[edge.to] = ready_dist_[ver] + edge.weight;
+      }
+      dist_[edge.to] = std::min(dist_[edge.to], ready_dist_[ver] + edge.weight);
+    }
+  }
+
+  void UpdateCut(VertexId ver, VertexId parent) {
+    for (auto edg_id : graph_.GetIncidentEdges(ver)) {
+      const auto& edge = graph_.GetEdge(edg_id);
+      if (!vertexes_used_[edge.to].is_used_ && edge.to != parent) {
+        cut_.insert(edge);
       }
     }
-    std::vector<size_t> real_path;
-    for (size_t ver_id = to; ver_id != 0; ver_id = path[ver_id]) {
-      real_path.push_back(ver_id);
-    }
-    std::reverse(real_path.begin(), real_path.end());
-    return {dists_[to].dist, std::move(real_path)};
+  }
+
+  Edge<Weight> GetMinEdgeFromCut() {
+    const auto res = *cut_.begin();
+    cut_.erase(res);
+    return res;
   }
 
  private:
   const Graph& graph_;
+  std::vector<int64_t> ready_dist_;
+  std::vector<int64_t> dist_;
   std::vector<Used> vertexes_used_;
-  std::vector<Dist> dists_;
+  std::set<Edge<Weight>, decltype([](const Edge<Weight>& lhs,
+                                     const Edge<Weight> rhs) -> bool {
+             return lhs.weight < rhs.weight;
+           })>
+      cut_;
 };
 
 }  // namespace graphs
@@ -135,21 +153,16 @@ class Router {
 int main() {
   size_t vertexes = 0, edges = 0;
   std::cin >> vertexes >> edges;
-  graphs::UnitGraph graph(vertexes);
+  graphs::DirectedWeightedGraph<int64_t> graph(vertexes);
   size_t from = 0, to = 0;
   std::cin >> from >> to;
   for (size_t i = 0; i < edges; ++i) {
     size_t begin = 0, end = 0;
-    std::cin >> begin >> end;
-    graph.AddEdge({begin, end});
-    graph.AddEdge({end, begin});
+    int64_t weight = 0;
+    std::cin >> begin >> end >> weight;
+    graph.AddEdge({begin, end, weight});
+    graph.AddEdge({end, begin, weight});
   }
   graphs::Router router(graph);
-  auto info = router.MinNotWeightPathFromTo(from, to);
-  std::cout << info.path << std::endl;
-  if (info.path != -1) {
-    for (auto p : info.vertexes) {
-      std::cout << p << " ";
-    }
-  }
+  std::cout << router.GetMinPathFromTo(from, to);
 }
