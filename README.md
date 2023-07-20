@@ -16,4 +16,4 @@ Excellent course of mipt:
 
 
 ### Other
- - Yandex [contest](https://contest.yandex.ru/contest/28412/problems) solving [here](algos/yandex)
+ - Yandex [contest](https://contest.yandex.ru/contest/28412/problems) is solved [here](algos/yandex)
