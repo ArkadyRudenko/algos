@@ -20,4 +20,4 @@ Excellent course of mipt - thanks to the teacher for this:
 
 
 ### Other
- - Yandex [contest](https://contest.yandex.ru/contest/28412/problems) solving [here](algos/yandex)
+ - Yandex [contest](https://contest.yandex.ru/contest/28412/problems) is solved [here](algos/yandex)
