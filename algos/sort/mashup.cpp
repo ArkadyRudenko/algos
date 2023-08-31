@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 // TODO
 
@@ -44,7 +45,25 @@ void MergeSort(int* arr, int l, int r) {
   }
 }
 
+using namespace std;  // namespace std
+
+class Solution {
+ public:
+  double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+    size_t j{0}, i{0};
+    size_t total = nums1.size() + nums2.size();
+    while (true) {
+      if (nums1[i] )
+    }
+  }
+};
+
 int main() {
+  std::vector vec1 = {1, 2};
+  std::vector vec2 = {-1, 3};
+  Solution s;
+  std::cout << s.findMedianSortedArrays(vec2, vec1) << '\n';
+  return 0;
   int n = 0;
   std::cin >> n;
   int* starts = new int[n];
