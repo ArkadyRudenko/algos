@@ -1,9 +1,8 @@
-add_subdirectory(internship)
+add_executable(z_func z_func.cpp)
 
-add_executable(task1 task1.cpp)
 
 set_target_properties(
-        task1
+        z_func
         PROPERTIES
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED ON)

@@ -173,33 +173,37 @@ inline ll divUp(ll a, ll b) {
 }
 
 #include <algorithm>
-#include <set>
-//#include <ranges>
-
-template <typename T>
-void printVec(const vec<T>& v, str d = "") {
-  for (const auto& i : v)
-    cout << i << d;
-  cout << '\n';
-}
+#include <ranges>
 
 void solve() {
-  int n, k;
-  cin>>n>>k;
-  vec<int> v;
-  v.resize(n);
-  for(int i = 0; i < n; ++i) {
-    cin>>v[i];
+  int n, m;
+  vec<int> bills;
+  vec<int> multi_bills;
+  cin >> n >> m;
+  bills.resize(m);
+  multi_bills.resize(m * 2);
+  for (int i = 0; i < m; ++i) {
+    cin >> bills[i];
+    multi_bills[i * 2] = bills[i];
+    multi_bills[i * 2 + 1] = bills[i];
   }
-  std::multiset<int> m;
-  for (int i = 0; i < k; ++i)
-    m.insert(v[i]);
-  for (int i = k; i <= n; ++i) {
-    cout<<*m.begin() << '\n';
-    if (i != n) {
-      m.extract(v[i - k]);
-      m.insert(v[i]);
+  sort(bills.begin(), bills.end());
+  sort(multi_bills.begin(), multi_bills.end());
+  int l{0}, r{2 * m - 1}, res{0}, pl{0}, pr{2 * m - 1};
+  vec<int> history;
+  bool yes{false};
+  // TODO
+  while (l < r) {
+
+
+  }
+  if (yes) {
+    std::reverse(history.begin(), history.end());
+    for (auto index : history) {
+      cout << multi_bills[index] << ' ';
     }
+  } else {
+    cout << -1;
   }
 }
 
@@ -219,74 +223,3 @@ int main() {
   cout << "\ntime: " << elapsed_seconds.count() << " s\n";
 #endif
 }
-
-/*
-dynamic 2d
-void solve() {
-  int n;
-  cin >> n;
-  vec<int> prices;
-  prices.resize(n);
-  for (auto& p : prices)
-    cin >> p;
-  vec<vec<int>> dp;
-  dp.resize(n + 1);
-  for (auto& d : dp)
-    d.resize(n + 2, 7777777);
-  dp[0][0] = 0;
-  for (int i = 1; i < n + 1; ++i) {
-    for (int j = 0; j < n + 1; ++j) {
-      auto cur_price = prices[i - 1];
-      if (j == 0 && cur_price <= 100) {
-        dp[i][j] = min(dp[i - 1][j] + cur_price, dp[i - 1][j + 1]);
-      } else if (j == 0) {
-        dp[i][j] = dp[i - 1][j + 1];
-      }
-      if (j != 0) {
-        if (cur_price <= 100) {
-          dp[i][j] = min(dp[i - 1][j] + cur_price, dp[i - 1][j + 1]);
-        } else {
-          dp[i][j] = min(dp[i - 1][j - 1] + cur_price, dp[i - 1][j + 1]);
-        }
-      }
-    }
-  }
-  vec<int> results;
-  int min = 1000000;
-  auto& res_vec = dp.back();
-  for (int i = 0; i < res_vec.size(); ++i) {
-    if (res_vec[i] <= min) {
-      results.push_back(i);
-      min = res_vec[i];
-    }
-  }
-  std::cout << min << '\n';
-  auto tickets = results.back();
-  cout << tickets;
-  int i = n - 1, j = (int)tickets;
-  vec<int> his;
-  while (i > 0) {
-    auto cur = dp[i][j] + prices[i], next = dp[i][j + 1];
-    if (j == 0) {
-      if (cur > next) {
-        his.push_back(i+1);
-        j++;
-      }
-    } else {
-      auto prev = dp[i][j - 1] + prices[i];
-      if (prices[i] > 100 && prev < cur && prev < next)
-        j--;
-      if (next < cur && next < prev) {
-        his.push_back(i+1);
-        j++;
-      }
-    }
-    --i;
-  }
-  // std::reverse(his.begin(), his.end());
-  cout << ' ' <<his.size()<<'\n';
-  for (i = (int)his.size()-1; i >= 0; --i) {
-    cout << his[i] << '\n';
-  }
-}
- */
